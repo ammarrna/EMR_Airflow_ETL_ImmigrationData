@@ -46,69 +46,10 @@ def transform_movies_to_parquet(**kwargs):
     headers = emr.create_spark_session(cluster_dns, 'spark')
     session_url = emr.wait_for_idle_session(cluster_dns, headers)
     statement_response = emr.submit_statement(session_url,
-                                              '/root/airflow/dags/transform/movies.scala')
+                                              '/root/airflow/dags/transform/codes.scala')
     emr.track_statement_progress(cluster_dns, statement_response.headers)
     emr.kill_spark_session(session_url)
 
-def transform_tags_to_parquet(**kwargs):
-    # ti is the Task Instance
-    ti = kwargs['ti']
-    cluster_id = ti.xcom_pull(task_ids='create_cluster')
-    cluster_dns = emr.get_cluster_dns(cluster_id)
-    headers = emr.create_spark_session(cluster_dns, 'spark')
-    session_url = emr.wait_for_idle_session(cluster_dns, headers)
-    statement_response = emr.submit_statement(session_url,
-                                              '/root/airflow/dags/transform/tags.scala')
-    emr.track_statement_progress(cluster_dns, statement_response.headers)
-    emr.kill_spark_session(session_url)
-
-def transform_ratings_to_parquet(**kwargs):
-    # ti is the Task Instance
-    ti = kwargs['ti']
-    cluster_id = ti.xcom_pull(task_ids='create_cluster')
-    cluster_dns = emr.get_cluster_dns(cluster_id)
-    headers = emr.create_spark_session(cluster_dns, 'spark')
-    session_url = emr.wait_for_idle_session(cluster_dns, headers)
-    statement_response = emr.submit_statement(session_url,
-                                              '/root/airflow/dags/transform/ratings.scala')
-    emr.track_statement_progress(cluster_dns, statement_response.headers)
-    emr.kill_spark_session(session_url)
-
-def transform_links_to_parquet(**kwargs):
-    # ti is the Task Instance
-    ti = kwargs['ti']
-    cluster_id = ti.xcom_pull(task_ids='create_cluster')
-    cluster_dns = emr.get_cluster_dns(cluster_id)
-    headers = emr.create_spark_session(cluster_dns, 'spark')
-    session_url = emr.wait_for_idle_session(cluster_dns, headers)
-    statement_response = emr.submit_statement(session_url,
-                                              '/root/airflow/dags/transform/links.scala')
-    emr.track_statement_progress(cluster_dns, statement_response.headers)
-    emr.kill_spark_session(session_url)
-
-def transform_genome_scores_to_parquet(**kwargs):
-    # ti is the Task Instance
-    ti = kwargs['ti']
-    cluster_id = ti.xcom_pull(task_ids='create_cluster')
-    cluster_dns = emr.get_cluster_dns(cluster_id)
-    headers = emr.create_spark_session(cluster_dns, 'spark')
-    session_url = emr.wait_for_idle_session(cluster_dns, headers)
-    statement_response = emr.submit_statement(session_url,
-                                              '/root/airflow/dags/transform/genome_scores.scala')
-    emr.track_statement_progress(cluster_dns, statement_response.headers)
-    emr.kill_spark_session(session_url)
-
-def transform_genome_tags_to_parquet(**kwargs):
-    # ti is the Task Instance
-    ti = kwargs['ti']
-    cluster_id = ti.xcom_pull(task_ids='create_cluster')
-    cluster_dns = emr.get_cluster_dns(cluster_id)
-    headers = emr.create_spark_session(cluster_dns, 'spark')
-    session_url = emr.wait_for_idle_session(cluster_dns, headers)
-    statement_response = emr.submit_statement(session_url,
-                                              '/root/airflow/dags/transform/genome_tags.scala')
-    emr.track_statement_progress(cluster_dns, statement_response.headers)
-    emr.kill_spark_session(session_url)
 
 # Define the individual tasks using Python Operators
 create_cluster = PythonOperator(
@@ -126,30 +67,6 @@ transform_movies = PythonOperator(
     python_callable=transform_movies_to_parquet,
     dag=dag)
 
-transform_ratings = PythonOperator(
-    task_id='transform_ratings',
-    python_callable=transform_ratings_to_parquet,
-    dag=dag)
-
-transform_tags = PythonOperator(
-    task_id='transform_tags',
-    python_callable=transform_tags_to_parquet,
-    dag=dag)
-
-transform_links = PythonOperator(
-    task_id='transform_links',
-    python_callable=transform_links_to_parquet,
-    dag=dag)
-
-transform_genome_scores = PythonOperator(
-    task_id='transform_genome_scores',
-    python_callable=transform_genome_scores_to_parquet,
-    dag=dag)
-
-transform_genome_tags = PythonOperator(
-    task_id='transform_genome_tags',
-    python_callable=transform_genome_tags_to_parquet,
-    dag=dag)
 
 
 terminate_cluster = PythonOperator(
