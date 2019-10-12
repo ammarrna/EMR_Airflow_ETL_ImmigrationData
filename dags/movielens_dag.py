@@ -16,7 +16,7 @@ default_args = {
 
 # Initialize the DAG
 # Concurrency --> Number of tasks allowed to run concurrently
-dag = DAG('transform_movielens', concurrency=3, schedule_interval=None, default_args=default_args)
+dag = DAG('Immigration Data Process', concurrency=3, schedule_interval=None, default_args=default_args)
 region = emr.get_region()
 emr.client(region_name=region)
 
@@ -38,7 +38,7 @@ def terminate_emr(**kwargs):
     emr.terminate_cluster(cluster_id)
 
 # Converts each of the movielens datafile to parquet
-def transform_movies_to_parquet(**kwargs):
+def transform_codes_to_parquet(**kwargs):
     # ti is the Task Instance
     ti = kwargs['ti']
     cluster_id = ti.xcom_pull(task_ids='create_cluster')
@@ -63,8 +63,8 @@ wait_for_cluster_completion = PythonOperator(
     dag=dag)
 
 transform_movies = PythonOperator(
-    task_id='transform_movies',
-    python_callable=transform_movies_to_parquet,
+    task_id='transform_codes',
+    python_callable=transform_codes_to_parquet,
     dag=dag)
 
 
@@ -78,8 +78,3 @@ terminate_cluster = PythonOperator(
 # construct the DAG by setting the dependencies
 create_cluster >> wait_for_cluster_completion
 wait_for_cluster_completion >> transform_movies >> terminate_cluster
-wait_for_cluster_completion >> transform_ratings >> terminate_cluster
-wait_for_cluster_completion >> transform_links >> terminate_cluster
-wait_for_cluster_completion >> transform_tags >> terminate_cluster
-wait_for_cluster_completion >> transform_genome_scores >> terminate_cluster
-wait_for_cluster_completion >> transform_genome_tags >> terminate_cluster
