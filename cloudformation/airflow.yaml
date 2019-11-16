@@ -104,6 +104,8 @@ Resources:
          echo 'export PATH=/usr/local/bin:$PATH' >> /root/.bash_profile
          source /root/.bash_profile
          # Initialize Airflow
+         pip uninstall marshmallow-sqlalchemy
+         pip install marshmallow-sqlalchemy==0.17.1
          airflow initdb
          # Update the RDS connection in the Airflow Config file
          sed -i '/sql_alchemy_conn/s/^/#/g' ~/airflow/airflow.cfg
