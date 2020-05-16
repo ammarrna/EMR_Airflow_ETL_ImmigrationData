@@ -11,8 +11,5 @@ This folder contains reusable code for Amazon EMR and Apache Livy.
 ##### dags/transform
 This folder contains sample transformation scala code which transforms the movielens data files from csv to parquet.
 
-#####  dags/movielens_dag.py
-This script contains the code for the DAG definition. It basically defines the Airflow pipeline.
-
 ### License
 This library is licensed under the Apache 2.0 License.
